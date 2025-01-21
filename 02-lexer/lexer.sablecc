@@ -1,0 +1,21 @@
+Language lexer;
+Lexer
+
+joker = Any;
+classe = 't'..'z';
+chaine = 'abcd';
+quatificateurs = 'a'* | 'a'? | 'a'+ | 'a'^(2..3) | 'a'^(3...) ;
+intersection = ('aa'|'bb') And ('a'+) ; // => 'aa'
+soustraction = ('aa'|'bb') Diff ('a'+) ; // => 'bb'
+soustraction_semantique = ('A'..'Z')+ - 'JEAN';
+plus_court = Shortest '/*' Any* '*/' ;
+separator = (('0'..'9')+ Separator '.')^4 ;
+
+Token joker, classe, chaine, quatificateurs, intersection, soustraction, soustraction_semantique, plus_court, separator;
+Ignored #10, #32;
+Priority
+	soustraction_semantique > joker;
+	joker > quatificateurs;
+
+Parser
+g = ;
