@@ -1,0 +1,13 @@
+Language calc;
+Lexer
+int = ('0'..'9')+;
+Ignored #10, #32;
+
+Parser
+exp = {add:} [left:]exp '+' [right:]factor |
+      {sub:} [left:]exp '-' [right:]factor |
+      {factor:} factor ;
+factor = {mul:} [left:]factor '*' [right:]term |
+         {term:} term ;
+term = {int:} int |
+       {par:} '(' exp ')' ;

@@ -1,0 +1,10 @@
+Language if;
+Lexer
+Ignored #10, #32;
+Parser
+s = {if:} 'if' '(' e ')' s |
+    {ifelse:} 'if' '(' e ')' s 'else' s |
+    {nop:} 'nop' ';' ;
+	Priority
+	Right if, ifelse;
+e = 'true' | 'false' ;

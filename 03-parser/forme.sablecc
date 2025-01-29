@@ -1,0 +1,10 @@
+Language formes;
+Lexer
+  nombre = ('0'..'9')+;
+  Ignored ' ';
+Parser
+  forme = {cercle:} 'centre' point 'rayon' long |
+          {segment:} [src:]point '--' [dst:]point ;
+  point = '(' [x:]long ',' [y:]long ')' ;
+  long = nombre unite ;
+  unite = 'cm' | 'mm' | 'pt' | 'px' ;

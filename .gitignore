@@ -1,1 +1,8 @@
 *.class
+*.log
+*.dot
+*.out
+language_*/
+*_lexer.nit
+*_parser.nit
+*_nodes.nit

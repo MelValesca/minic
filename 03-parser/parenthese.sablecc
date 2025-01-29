@@ -1,0 +1,4 @@
+Language parenthese;
+Parser
+par = {item:} '(' par ')' |
+      {empty:} '(' ')' ;

@@ -1,0 +1,8 @@
+Language list;
+Lexer
+id = ('a'..'z')+;
+Ignored #10, #32;
+
+Parser
+list = {many:} id list |
+       {one:} id ;
