@@ -1,0 +1,14 @@
+Language calc;
+Lexer
+int = ('0'..'9')+;
+Ignored #10, #32;
+
+Parser
+exp = {add:} [left:]exp '+' [right:]exp |
+      {sub:} [left:]exp '-' [right:]exp |
+      {mul:} [left:]exp '*' [right:]exp |
+      {int:} int |
+      {par:} '(' exp ')' ;
+   Priority
+      Left mul;
+      Left add, sub;
