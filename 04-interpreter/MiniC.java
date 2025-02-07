@@ -3,7 +3,7 @@ import language_minic.*;
 import java.io.*;
 import java.util.HashMap;
 
-/** Naive evaluator for a simple calculator. */
+/** Naive interpreter for a first MiniC specification. */
 public class MiniC extends Walker {
 
 	/** Interpreter main method.
@@ -61,14 +61,14 @@ public class MiniC extends Walker {
 		try {
 			lastExpValue = Integer.parseInt(node.getText());
 		} catch (NumberFormatException e) {
-			throw new EvaluationError(node.getText() + ": excesses integer capacity");
+			throw new RuntimeException(node.getText() + ": error: excesses integer capacity");
 		}
 	}
 
-	HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
 
-	void setVariable(NId id, int value) {
-		variables.put(id.getText(), value);
+	void setVariable(NId nid, int value) {
+		variables.put(nid.getText(), value);
 	}
 
 	@Override
@@ -128,14 +128,4 @@ public class MiniC extends Walker {
 
 	// NOTE: caseExp_Int and caseExp_Par are not overridden since the default behavior
 	// is to evaluate their subtree which correctly assigns lastExpValue
-
-	/**
-	 * Error during an evaluation.
-	 * Made a RuntimeException since the exception must pass through generated methods.
-	 * **/
-	public static class EvaluationError extends RuntimeException {
-		public EvaluationError(String string) {
-			super(string);
-		}
-	}
 }
