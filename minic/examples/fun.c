@@ -12,3 +12,4 @@ int bar(int i) {
 int main() {
 	bar(12);
 }
+//stdout:12425

@@ -4,3 +4,4 @@ int main() {
 	bool b = 0<1;
 	if(b) { printbool(a); println(); }
 }
+//stdout:true

@@ -13,3 +13,4 @@ int main() {
 	printint(a);
 	println();
 }
+//stdout:610
