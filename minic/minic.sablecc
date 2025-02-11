@@ -1,0 +1,37 @@
+Language minic;
+Lexer
+d = '0'..'9';
+w = 'a'..'z';
+int = d+;
+id = w(d|w)*;
+blank = (#9 | #10 | #14 | #32)+;
+comment = ('//'|'#') (Any - #10)* | Shortest '/*' Any* '*/';
+Ignored blank, comment;
+
+Parser
+prog = type 'main' '(' ')' block ;
+
+block = '{' stmts '}' ;
+stmts = {some:} stmts stmt |
+        {none:} ;
+stmt = {var:} type id '=' exp ';' |
+       {assign:} id '=' exp ';' |
+       {if:} 'if' '(' exp ')' block |
+       {ifelse:} 'if' '(' exp ')' block 'else' [else:]block |
+       {while:} 'while' '(' exp ')' block |
+       {printint:} 'printint' '(' exp ')' ';' |
+       {println:} 'println' '(' ')' ';' ;
+
+type = {int:} 'int' ;
+
+exp = {add:} [left:]exp '+' [right:]exp |
+      {sub:} [left:]exp '-' [right:]exp |
+      {mul:} [left:]exp '*' [right:]exp |
+      {int:} int |
+      {par:} '(' exp ')' |
+      {lt:} [left:]exp '<' [right:]exp |
+      {var:} id;
+   Priority
+      Left mul;
+      Left add, sub;
+      Left lt;
