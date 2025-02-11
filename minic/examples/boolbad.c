@@ -1,0 +1,7 @@
+#include "minic.c"
+
+int main() {
+	bool a = 42;
+	int b = 0<1;
+	if(b) { printbool(5); }
+}

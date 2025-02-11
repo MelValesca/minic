@@ -1,3 +1,4 @@
+#include "minic.c"
 int main() {
 	int a = 1;
 	if(0<1) {
