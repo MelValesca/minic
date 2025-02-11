@@ -9,6 +9,18 @@ public class ScopeAnalysis extends Walker {
 
     Scope currentScope;
 
+    Map<String, Function> functions = new HashMap<String, Function>();
+
+    @Override
+    public void caseFun(NFun node) {
+        Function function = new Function();
+        functions.put(node.get_Id().getText(), function);
+        currentScope = new Scope(currentScope);
+        super.caseFun(node);
+        currentScope = currentScope.prev;
+        function.body = node.get_Block();
+    }
+
     @Override
     public void caseBlock(NBlock node) {
         currentScope = new Scope(currentScope);
@@ -17,6 +29,14 @@ public class ScopeAnalysis extends Walker {
     }
 
     Map<NId, Variable> variables = new HashMap<>();
+
+    @Override
+    public void caseParam(NParam node) {
+        String name = node.get_Id().getText();
+        Variable variable = new Variable(name, node);
+        currentScope.vars.put(name, variable);
+        variables.put(node.get_Id(), variable);
+    }
 
     @Override
     public void inStmt_Var(NStmt_Var node) {

@@ -13,6 +13,14 @@ public class TypeAnalysis extends Walker {
         this.scopeAnalysis = scopeAnalysis;
     }
 
+    @Override
+    public void caseFun(NFun node) {
+        Type returnType = getType(node.get_Type());
+        Function function = scopeAnalysis.functions.get(node.get_Id().getText());
+        function.returnType = returnType;
+        super.caseFun(node);
+    }
+
     Map<NExp, Type> expTypes = new HashMap<>();
 
     void visitExp(NExp node, Type type) {
@@ -94,6 +102,13 @@ public class TypeAnalysis extends Walker {
     }
 
     @Override
+    public void caseParam(NParam node) {
+        Type type = getType(node.get_Type());
+        Variable variable = scopeAnalysis.variables.get(node.get_Id());
+        variable.type = type;
+    }
+
+    @Override
     public void caseStmt_If(NStmt_If node) {
         visitExp(node.get_Exp(), Type.Bool);
         node.get_Block().apply(this);
@@ -117,5 +132,11 @@ public class TypeAnalysis extends Walker {
 
     public void caseStmt_Printbool(NStmt_Printbool node) {
         visitExp(node.get_Exp(), Type.Bool);
+    }
+
+    @Override
+    public void caseExp_Call(NExp_Call node) {
+        Function function = scopeAnalysis.functions.get(node.get_Id().getText());
+        expTypes.put(node, function.returnType);
     }
 }

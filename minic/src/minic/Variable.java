@@ -1,11 +1,11 @@
 package minic;
 
-import minic.language_minic.NStmt_Var;
+import minic.language_minic.Node;
 
 public class Variable {
     String name;
-    NStmt_Var declaration;
-    public Variable(String name, NStmt_Var declaration) {
+    Node declaration;
+    public Variable(String name, Node declaration) {
         this.name = name;
         this.declaration = declaration;
     }

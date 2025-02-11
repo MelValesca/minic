@@ -22,7 +22,8 @@ public class MiniC extends Walker {
 		syntaxTree.apply(interpreter.litteralAnalysis);
 		syntaxTree.apply(interpreter.scopeAnalysis);
 		syntaxTree.apply(interpreter.typeAnalysis);
-		syntaxTree.apply(interpreter);
+		Function main = interpreter.scopeAnalysis.functions.get("main");
+		main.body.apply(interpreter);
 	}
 
 	/** Visit and evaluate a node.
@@ -147,6 +148,12 @@ public class MiniC extends Walker {
 	@Override
 	public void caseStmt_Println(NStmt_Println node) {
 		System.out.println();
+	}
+
+	@Override
+	public void caseStmt_Call(NStmt_Call node) {
+		Function function = scopeAnalysis.functions.get(node.get_Id().getText());
+		// to be continued....
 	}
 
 	// NOTE: caseExp_Int and caseExp_Par are not overridden since the default behavior

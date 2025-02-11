@@ -9,7 +9,17 @@ comment = ('//'|'#') (Any - #10)* | Shortest '/*' Any* '*/';
 Ignored blank, comment;
 
 Parser
-prog = type 'main' '(' ')' block ;
+prog = funs ;
+funs = {many:} funs fun |
+       {none:} ;
+
+fun = type id '(' params ')' block ;
+
+params = {many:} params ',' param |
+         {one:} param |
+         {none:} ;
+
+param = type id;
 
 block = '{' stmts '}' ;
 stmts = {some:} stmts stmt |
@@ -21,7 +31,13 @@ stmt = {var:} type id '=' exp ';' |
        {while:} 'while' '(' exp ')' block |
        {printint:} 'printint' '(' exp ')' ';' |
        {printbool:} 'printbool' '(' exp ')' ';' |
-       {println:} 'println' '(' ')' ';' ;
+       {println:} 'println' '(' ')' ';' |
+       {call:} id '(' args ')' ';' |
+       {return:} 'return' exp ';' ;
+
+args = {many:} args ',' exp |
+       {one:} exp |
+       {none:};
 
 type = {int:} 'int' |
        {bool:} 'bool' ;
@@ -34,7 +50,9 @@ exp = {add:} [left:]exp '+' [right:]exp |
       {false:} 'false' |
       {par:} '(' exp ')' |
       {lt:} [left:]exp '<' [right:]exp |
-      {var:} id;
+      {var:} id |
+      {call:} id '(' args ')';
+
    Priority
       Left mul;
       Left add, sub;
