@@ -9,4 +9,6 @@ public class Variable {
         this.name = name;
         this.declaration = declaration;
     }
+
+    Type type;
 }

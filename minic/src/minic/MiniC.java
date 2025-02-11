@@ -10,6 +10,7 @@ public class MiniC extends Walker {
 
 	LitteralAnalysis litteralAnalysis = new LitteralAnalysis();
 	ScopeAnalysis scopeAnalysis = new ScopeAnalysis();
+	TypeAnalysis typeAnalysis = new TypeAnalysis(scopeAnalysis);
 
 	/** Interpreter main method.
 	 * Parse and evaluate each line from the standard input. */
@@ -20,6 +21,7 @@ public class MiniC extends Walker {
 		MiniC interpreter = new MiniC();
 		syntaxTree.apply(interpreter.litteralAnalysis);
 		syntaxTree.apply(interpreter.scopeAnalysis);
+		syntaxTree.apply(interpreter.typeAnalysis);
 		syntaxTree.apply(interpreter);
 	}
 
