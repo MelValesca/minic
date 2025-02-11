@@ -68,6 +68,16 @@ public class MiniC extends Walker {
 		lastExpValue = litteralAnalysis.values.get(node);
 	}
 
+	@Override
+	public void caseExp_True(NExp_True node) {
+		lastExpValue = 1;
+	}
+
+	@Override
+	public void caseExp_False(NExp_False node) {
+		lastExpValue = 0;
+	}
+
 	private HashMap<Variable, Integer> variables = new HashMap<>();
 
 	void setVariable(NId nid, int value) {
@@ -124,6 +134,12 @@ public class MiniC extends Walker {
 	public void caseStmt_Printint(NStmt_Printint node) {
 		int val = visitExp(node.get_Exp());
 		System.out.print(val);
+	}
+
+	@Override
+	public void caseStmt_Printbool(NStmt_Printbool node) {
+		int val = visitExp(node.get_Exp());
+		System.out.print(val != 0 ? "true" : "false");
 	}
 
 	@Override

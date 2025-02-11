@@ -20,14 +20,18 @@ stmt = {var:} type id '=' exp ';' |
        {ifelse:} 'if' '(' exp ')' block 'else' [else:]block |
        {while:} 'while' '(' exp ')' block |
        {printint:} 'printint' '(' exp ')' ';' |
+       {printbool:} 'printbool' '(' exp ')' ';' |
        {println:} 'println' '(' ')' ';' ;
 
-type = {int:} 'int' ;
+type = {int:} 'int' |
+       {bool:} 'bool' ;
 
 exp = {add:} [left:]exp '+' [right:]exp |
       {sub:} [left:]exp '-' [right:]exp |
       {mul:} [left:]exp '*' [right:]exp |
       {int:} int |
+      {true:} 'true' |
+      {false:} 'false' |
       {par:} '(' exp ')' |
       {lt:} [left:]exp '<' [right:]exp |
       {var:} id;
