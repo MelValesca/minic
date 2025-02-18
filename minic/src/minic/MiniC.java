@@ -150,11 +150,48 @@ public class MiniC extends Walker {
 		System.out.println();
 	}
 
+	void call(NId nid, NArgs nargs) {
+		Function function = scopeAnalysis.functions.get(nid.getText());
+		HashMap<Variable, Integer> oldFrame = variables;
+		HashMap<Variable, Integer> newFrame = new HashMap<>();
+
+		switch(nargs.getType()) {
+			case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
+			case T_Args_One: {
+				int value = visitExp(((NArgs_One) nargs).get_Exp());
+				Variable param = function.parameters.getFirst();
+				newFrame.put(param, value);
+				break;
+			}
+			case T_Args_None: // nothing
+				break;
+			default: throw new RuntimeException("Unknown arg type: " + nargs.getType());
+		}
+		variables = newFrame;
+		try {
+			function.body.apply(this);
+			lastExpValue = 0;
+		} catch (ReturnLongJump e) {}
+		variables = oldFrame;
+	}
+
 	@Override
 	public void caseStmt_Call(NStmt_Call node) {
-		Function function = scopeAnalysis.functions.get(node.get_Id().getText());
-		// to be continued....
+		call(node.get_Id(), node.get_Args());
 	}
+
+	@Override
+	public void caseExp_Call(NExp_Call node) {
+		call(node.get_Id(), node.get_Args());
+	}
+
+	@Override
+	public void caseStmt_Return(NStmt_Return node) {
+		visitExp(node.get_Exp());
+		throw new ReturnLongJump();
+	}
+
+	private static class ReturnLongJump extends RuntimeException {}
 
 	// NOTE: caseExp_Int and caseExp_Par are not overridden since the default behavior
 	// is to evaluate their subtree which correctly assigns lastExpValue

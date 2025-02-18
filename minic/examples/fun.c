@@ -1,15 +1,19 @@
 #include "minic.c"
 
-int foo() {
-	printint(42);
-	return 5;
+int foo(int a) {
+	printint(a);
+	println();
+	return a + 1;
 }
-int bar(int i) {
-	printint(i);
-	printint(foo());
+
+int bar(int b) {
+	return foo(b+1) + 1;
 }
 
 int main() {
-	bar(12);
+	int r = bar(1);
+	printint(r);
+	println();
 }
-//stdout:12425
+//stdout:2
+//stdout:4

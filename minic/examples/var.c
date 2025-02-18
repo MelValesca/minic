@@ -1,6 +1,6 @@
 #include "minic.c"
 int main() {
-	a = 5;
-	int a = 1;
+	printint(a);
+	int a = 0;
 }
 //stderr:Variable 'a' not found

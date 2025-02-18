@@ -1,12 +1,13 @@
 #include "minic.c"
+
 int main() {
 	int a = 1;
-	if (1<2) {
+	if(true) {
 		a = 2;
-		int a = 3;
-		a = 4;
-		printint(a);
+	} else {
+		a = 3;
 	}
 	printint(a);
+	println();
 }
-//stdout:42
+//stdout:2

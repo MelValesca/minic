@@ -13,12 +13,16 @@ public class TypeAnalysis extends Walker {
         this.scopeAnalysis = scopeAnalysis;
     }
 
+    Function currentFunction;
+
     @Override
     public void caseFun(NFun node) {
         Type returnType = getType(node.get_Type());
         Function function = scopeAnalysis.functions.get(node.get_Id().getText());
+        currentFunction = function;
         function.returnType = returnType;
         super.caseFun(node);
+        currentFunction = null;
     }
 
     Map<NExp, Type> expTypes = new HashMap<>();
@@ -56,6 +60,12 @@ public class TypeAnalysis extends Walker {
         visitExp(node.get_Left(), Type.Int);
         visitExp(node.get_Right(), Type.Int);
         expTypes.put(node, Type.Bool);
+    }
+
+    @Override
+    public void caseExp_Par(NExp_Par node) {
+        super.caseExp_Par(node);
+        expTypes.put(node, expTypes.get(node.get_Exp()));
     }
 
     @Override
@@ -137,6 +147,28 @@ public class TypeAnalysis extends Walker {
     @Override
     public void caseExp_Call(NExp_Call node) {
         Function function = scopeAnalysis.functions.get(node.get_Id().getText());
+
+        NArgs nargs = node.get_Args();
+        switch(nargs.getType()) {
+            case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
+            case T_Args_One: {
+                if (function.parameters.size() != 1)
+                    throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got one.");
+                visitExp(((NArgs_One) nargs).get_Exp(), function.parameters.getFirst().type);
+                break;
+            }
+            case T_Args_None: // nothing
+                if (!function.parameters.isEmpty())
+                    throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got none.");
+                break;
+            default: throw new RuntimeException("Unknown arg type: " + nargs.getType());
+        }
+
         expTypes.put(node, function.returnType);
+    }
+
+    @Override
+    public void caseStmt_Return(NStmt_Return node) {
+        visitExp(node.get_Exp(), currentFunction.returnType);
     }
 }
