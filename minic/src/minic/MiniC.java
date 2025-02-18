@@ -159,7 +159,7 @@ public class MiniC extends Walker {
 			case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
 			case T_Args_One: {
 				int value = visitExp(((NArgs_One) nargs).get_Exp());
-				Variable param = function.parameters.getFirst();
+				Variable param = function.parameters.get(0);
 				newFrame.put(param, value);
 				break;
 			}
