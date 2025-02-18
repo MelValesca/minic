@@ -4,7 +4,7 @@
 int main() {
 	int n = 2;
 	int nb = 0;
-	while (n<10000) {
+	while (n<100) {
 		int f = 2;
 		bool prime = true;
 		while (f<n) {
@@ -27,4 +27,4 @@ int main() {
 	printint(nb);
 	println();
 }
-//stdout:1229
+//stdout:25
