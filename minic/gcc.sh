@@ -1,4 +1,4 @@
 #!/bin/sh
-set -e
-gcc "$@"
+set -ex
+gcc "$1" -o a.out
 ./a.out
