@@ -154,7 +154,7 @@ public class TypeAnalysis extends Walker {
             case T_Args_One: {
                 if (function.parameters.size() != 1)
                     throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got one.");
-                visitExp(((NArgs_One) nargs).get_Exp(), function.parameters.getFirst().type);
+                visitExp(((NArgs_One) nargs).get_Exp(), function.parameters.get(0).type);
                 break;
             }
             case T_Args_None: // nothing
