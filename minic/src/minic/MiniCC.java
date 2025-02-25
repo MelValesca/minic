@@ -122,6 +122,30 @@ public class MiniCC extends Walker {
 	}
 
 	@Override
+	public void caseExp_Not(NExp_Not node) {
+		int r = visitExp(node.get_Exp());
+		write("\tsbeqz " + r + ", s" + r + "\n");
+	}
+
+	@Override
+	public void caseExp_And(NExp_And node) {
+		int l = visitExp(node.get_Left());
+		String label = genLabel();
+		write("\tbeqz s" + l + ", " + label + "\n");
+		visitExp(node.get_Right());
+		write(label + ":\n");
+	}
+
+	@Override
+	public void caseExp_Or(NExp_Or node) {
+		int l = visitExp(node.get_Left());
+		String label = genLabel();
+		write("\tbnez s" + l + ", " + label + "\n");
+		visitExp(node.get_Right());
+		write(label + ":\n");
+	}
+
+	@Override
 	public void caseInt(NInt node) {
 		int v = litteralAnalysis.values.get(node);
 		write("\tli s"+lastRegister + ", " + v + "\n");

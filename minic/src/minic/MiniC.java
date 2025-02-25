@@ -67,6 +67,24 @@ public class MiniC extends Walker {
 	}
 
 	@Override
+	public void caseExp_Not(NExp_Not node) {
+		int v = visitExp(node.get_Exp());
+		lastExpValue = (v!=0) ? 0 : 1;
+	}
+
+	@Override
+	public void caseExp_And(NExp_And node) {
+		int left = visitExp(node.get_Left());
+		if (left != 0) visitExp(node.get_Right());
+	}
+
+	@Override
+	public void caseExp_Or(NExp_Or node) {
+		int left = visitExp(node.get_Left());
+		if (left == 0) visitExp(node.get_Right());
+	}
+
+	@Override
 	public void caseInt(NInt node) {
 		lastExpValue = litteralAnalysis.values.get(node);
 	}

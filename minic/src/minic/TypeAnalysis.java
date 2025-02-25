@@ -63,6 +63,26 @@ public class TypeAnalysis extends Walker {
     }
 
     @Override
+    public void caseExp_Not(NExp_Not node) {
+        visitExp(node.get_Exp(), Type.Bool);
+        expTypes.put(node, Type.Bool);
+    }
+
+    @Override
+    public void caseExp_And(NExp_And node) {
+        visitExp(node.get_Left(), Type.Bool);
+        visitExp(node.get_Right(), Type.Bool);
+        expTypes.put(node, Type.Bool);
+    }
+
+    @Override
+    public void caseExp_Or(NExp_Or node) {
+        visitExp(node.get_Left(), Type.Bool);
+        visitExp(node.get_Right(), Type.Bool);
+        expTypes.put(node, Type.Bool);
+    }
+
+    @Override
     public void caseExp_Par(NExp_Par node) {
         super.caseExp_Par(node);
         expTypes.put(node, expTypes.get(node.get_Exp()));

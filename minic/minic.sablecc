@@ -45,6 +45,9 @@ type = {int:} 'int' |
 exp = {add:} [left:]exp '+' [right:]exp |
       {sub:} [left:]exp '-' [right:]exp |
       {mul:} [left:]exp '*' [right:]exp |
+      {and:} [left:]exp '&&' [right:]exp |
+      {or:} [left:]exp '||' [right:]exp |
+      {not:} '!' exp |
       {int:} int |
       {true:} 'true' |
       {false:} 'false' |
@@ -54,6 +57,9 @@ exp = {add:} [left:]exp '+' [right:]exp |
       {call:} id '(' args ')';
 
    Priority
+      Left not;
       Left mul;
       Left add, sub;
       Left lt;
+      Left and;
+      Left or;
