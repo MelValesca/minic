@@ -15,13 +15,13 @@ public class ScopeAnalysis extends Walker {
 
     @Override
     public void caseFun(NFun node) {
-        Function function = new Function();
+        String name = node.get_Id().getText();
+        Function function = new Function(name, node.get_Block());
         currentFunction = function;
-        functions.put(node.get_Id().getText(), function);
+        functions.put(name, function);
         currentScope = new Scope(currentScope);
         super.caseFun(node);
         currentScope = currentScope.prev;
-        function.body = node.get_Block();
         currentFunction = null;
     }
 
