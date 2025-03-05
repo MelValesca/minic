@@ -5,6 +5,7 @@ import minic.front.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 
 /** Naive interpreter for a first MiniC specification. */
 public class MiniCC extends Walker {
@@ -51,7 +52,6 @@ public class MiniCC extends Walker {
 		write("\tsd ra, 0(sp)\n");
 		for(int i=0; i<12; i++)
 			write("\tsd s" + i + ", " + ((i*8)+8) + "(sp)\n");
-
 		super.caseFun(node);
 
 		write("\tli a0, 0\n");
@@ -68,7 +68,7 @@ public class MiniCC extends Walker {
 	public void caseParam(NParam node) {
 		Variable var = scopeAnalysis.variables.get(node.get_Id());
 		variables.put(var, lastRegister);
-		write("\tmv s" + lastRegister + ", a0\n");
+		write("\tmv s" + lastRegister + ", a" + lastRegister + "\n");
 		lastRegister++;
 	}
 
@@ -251,16 +251,10 @@ public class MiniCC extends Walker {
 	}
 
 	void call(NId nid, NArgs nargs) {
-		switch(nargs.getType()) {
-			case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
-			case T_Args_One: {
-				int r = visitExp(((NArgs_One) nargs).get_Exp());
-				write("\tmv a0, s" + r + "\n");
-				break;
-			}
-			case T_Args_None: // nothing
-				break;
-			default: throw new RuntimeException("Unknown arg type: " + nargs.getType());
+		List<NExp> exps = scopeAnalysis.collectArgs(nargs);
+		for(int i = 0; i < exps.size(); i++) {
+			int r = visitExp(exps.get(i));
+			write("\tmv a" + i + ", s" + r + "\n");
 		}
 		write("\tcall " + nid.getText() + "\n");
 	}

@@ -3,6 +3,7 @@ package minic.front;
 import language_minic.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TypeAnalysis extends Walker {
@@ -168,20 +169,11 @@ public class TypeAnalysis extends Walker {
     public void caseExp_Call(NExp_Call node) {
         Function function = scopeAnalysis.functions.get(node.get_Id().getText());
 
-        NArgs nargs = node.get_Args();
-        switch(nargs.getType()) {
-            case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
-            case T_Args_One: {
-                if (function.parameters.size() != 1)
-                    throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got one.");
-                visitExp(((NArgs_One) nargs).get_Exp(), function.parameters.get(0).type);
-                break;
-            }
-            case T_Args_None: // nothing
-                if (!function.parameters.isEmpty())
-                    throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got none.");
-                break;
-            default: throw new RuntimeException("Unknown arg type: " + nargs.getType());
+        List<NExp> nargs = scopeAnalysis.collectArgs(node.get_Args());
+        if (nargs.size() !=  function.parameters.size())
+            throw new RuntimeException("error: expected " + function.parameters.size() + "parameter(s), got " + nargs.size());
+        for (int i = 0; i < function.parameters.size(); i++) {
+            visitExp(nargs.get(i), function.parameters.get(i).type);
         }
 
         expTypes.put(node, function.returnType);

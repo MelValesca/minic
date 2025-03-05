@@ -5,6 +5,7 @@ import minic.front.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 
 /** Naive interpreter for a first MiniC specification. */
 public class MiniC extends Walker {
@@ -174,18 +175,13 @@ public class MiniC extends Walker {
 		HashMap<Variable, Integer> oldFrame = variables;
 		HashMap<Variable, Integer> newFrame = new HashMap<>();
 
-		switch(nargs.getType()) {
-			case T_Args_Many: throw new RuntimeException("ICE: not implemented yet multiple args");
-			case T_Args_One: {
-				int value = visitExp(((NArgs_One) nargs).get_Exp());
-				Variable param = function.parameters.get(0);
-				newFrame.put(param, value);
-				break;
-			}
-			case T_Args_None: // nothing
-				break;
-			default: throw new RuntimeException("Unknown arg type: " + nargs.getType());
+		List<NExp> exps = scopeAnalysis.collectArgs(nargs);
+		for (int i = 0; i < exps.size(); i++) {
+			int value = visitExp(exps.get(i));
+			Variable param = function.parameters.get(i);
+			newFrame.put(param, value);
 		}
+
 		variables = newFrame;
 		try {
 			function.body.apply(this);

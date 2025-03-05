@@ -2,7 +2,9 @@ package minic.front;
 
 import language_minic.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScopeAnalysis extends Walker {
@@ -90,4 +92,22 @@ public class ScopeAnalysis extends Walker {
         }
     }
 
+    public List<NExp> collectArgs(NArgs nargs) {
+        List<NExp> result = new ArrayList<>();
+        for (;;) {
+            switch (nargs.getType()) {
+                case T_Args_None:
+                    return result;
+                case T_Args_One:
+                    result.add(((NArgs_One)nargs).get_Exp());
+                    return result;
+                case T_Args_Many:
+                    result.add(((NArgs_Many)nargs).get_Exp());
+                    nargs = ((NArgs_Many)nargs).get_Args();
+                    break;
+                default:
+                    throw new RuntimeException("ICE: Unexpected arg type: " + nargs);
+            }
+        }
+    }
 }
