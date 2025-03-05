@@ -1,13 +1,13 @@
-package minic;
+package minic.front;
 
 import language_minic.NBlock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedTransferQueue;
 
 public class Function {
+    public String name;
     public List<Variable> parameters = new ArrayList<>();
-    Type returnType;
-    NBlock body;
+    public Type returnType;
+    public NBlock body;
 }

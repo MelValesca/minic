@@ -1,4 +1,4 @@
-package minic;
+package minic.front;
 
 import language_minic.*;
 
@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class ScopeAnalysis extends Walker {
 
-    Scope currentScope;
+    private Scope currentScope;
 
-    Map<String, Function> functions = new HashMap<String, Function>();
+    public Map<String, Function> functions = new HashMap<String, Function>();
 
-    Function currentFunction;
+    private Function currentFunction;
 
     @Override
     public void caseFun(NFun node) {
@@ -32,7 +32,7 @@ public class ScopeAnalysis extends Walker {
         currentScope = currentScope.prev;
     }
 
-    Map<NId, Variable> variables = new HashMap<>();
+    public Map<NId, Variable> variables = new HashMap<>();
 
     @Override
     public void caseParam(NParam node) {

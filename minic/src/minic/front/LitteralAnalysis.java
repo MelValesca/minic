@@ -1,4 +1,4 @@
-package minic;
+package minic.front;
 
 import language_minic.*;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LitteralAnalysis extends Walker {
-	Map<NInt, Integer> values = new HashMap<>();
+	public Map<NInt, Integer> values = new HashMap<>();
 
 	@Override
 	public void caseInt(NInt node) {

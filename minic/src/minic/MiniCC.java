@@ -1,6 +1,7 @@
 package minic;
 
 import language_minic.*;
+import minic.front.*;
 
 import java.io.*;
 import java.util.HashMap;

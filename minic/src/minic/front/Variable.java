@@ -1,14 +1,14 @@
-package minic;
+package minic.front;
 
 import language_minic.Node;
 
 public class Variable {
-    String name;
-    Node declaration;
+    public String name;
+    public Node declaration;
     public Variable(String name, Node declaration) {
         this.name = name;
         this.declaration = declaration;
     }
 
-    Type type;
+    public Type type;
 }

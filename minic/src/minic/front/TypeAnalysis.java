@@ -1,4 +1,4 @@
-package minic;
+package minic.front;
 
 import language_minic.*;
 
