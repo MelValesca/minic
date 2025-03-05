@@ -1,6 +1,6 @@
 package minic;
 
-import minic.language_minic.Node;
+import language_minic.Node;
 
 public class Variable {
     String name;

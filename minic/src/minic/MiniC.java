@@ -1,6 +1,6 @@
 package minic;
 
-import minic.language_minic.*;
+import language_minic.*;
 
 import java.io.*;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class MiniC extends Walker {
 	 * Parse and evaluate each line from the standard input. */
 	public static void main(String[] args) throws Exception {
 		FileReader fr = new FileReader(args[0]);
-		Parser parser = new minic.language_minic.Parser(fr);
+		Parser parser = new Parser(fr);
 		Node syntaxTree = parser.parse();
 		MiniC interpreter = new MiniC();
 		syntaxTree.apply(interpreter.litteralAnalysis);

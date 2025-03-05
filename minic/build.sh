@@ -12,7 +12,7 @@ fi
 
 
 if find src/ ./minic.sablecc -type f -printf '%T@ %p\n' | sort | tail -n 1 | grep -q minic.sablecc; then
-	java -jar sablecc-4-beta.2/lib/sablecc.jar minic.sablecc -p minic -d src
+	java -jar sablecc-4-beta.2/lib/sablecc.jar minic.sablecc -d src
 fi
 
 mkdir -p build

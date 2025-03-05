@@ -1,6 +1,6 @@
 package minic;
 
-import minic.language_minic.NBlock;
+import language_minic.NBlock;
 
 import java.util.ArrayList;
 import java.util.List;
