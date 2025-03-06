@@ -5,9 +5,19 @@ set +e
 cmd=$1
 shift
 
+opts=()
+while [ "${1:0:1}" = "-" ]; do
+	opts+=("$1")
+	shift
+done
+
 if [ "$#" = 0 ]; then
 	set examples/*.c
 fi
+
+#echo "cmd: $cmd"
+#echo "opts: ${opts[*]}"
+#echo "args: ${*}"
 
 mkdir -p out
 
@@ -20,7 +30,7 @@ for src do
 	echo "$src"
 	sed -n 's|^//stdout:\(.*\)|\1|p' "$src" > "out/$b.expected"
 	stderr=$(grep -P -o '//stderr:\K.*' "$src")
-	"$cmd" "$src" > "out/$b.got" 2> "out/$b.log"
+	"$cmd" "${opts[@]}" "$src" > "out/$b.got" 2> "out/$b.log"
 	ret=$?
 	if [ -n "$stderr" ]; then
 		if ! grep -q -F "$stderr" "out/$b.log"; then
