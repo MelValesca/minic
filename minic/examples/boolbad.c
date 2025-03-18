@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int main() {
 	bool a = 42;

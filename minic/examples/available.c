@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	int a = 10;
 	int b = a * 4 + 1;

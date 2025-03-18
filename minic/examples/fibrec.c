@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int fib(int n) {
 	if (n<2) { return n; }
@@ -6,7 +6,7 @@ int fib(int n) {
 }
 
 int main() {
-	printint(fib(15));
+	printint(fib(15)+fib(15)-fib(15));
 	println();
 }
 //stdout:610

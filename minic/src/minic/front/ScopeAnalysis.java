@@ -99,10 +99,10 @@ public class ScopeAnalysis extends Walker {
                 case T_Args_None:
                     return result;
                 case T_Args_One:
-                    result.add(((NArgs_One)nargs).get_Exp());
+                    result.add(0, ((NArgs_One)nargs).get_Exp());
                     return result;
                 case T_Args_Many:
-                    result.add(((NArgs_Many)nargs).get_Exp());
+                    result.add(0, ((NArgs_Many)nargs).get_Exp());
                     nargs = ((NArgs_Many)nargs).get_Args();
                     break;
                 default:

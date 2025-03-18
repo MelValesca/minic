@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	printint(4000+4000);
 	printint(4000-4000);

@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 bool i(bool x) {
 	printbool(x);

@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	int sum = 0;
 	int i = 0;

@@ -7,3 +7,6 @@ out/
 sablecc-4-beta.2*
 rars*.jar
 minicc.out*
+*.svg
+*.pgf
+*.ir

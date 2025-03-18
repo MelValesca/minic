@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int foo(bool x) {
 	int a = 1;

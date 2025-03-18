@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	printint(1+1);
 	printint(1-1);

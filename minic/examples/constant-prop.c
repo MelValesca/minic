@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	int x = 10+5;
 	int y = 5*2+(x-5);

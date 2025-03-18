@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int foo(int n) {
 	int i = 0;

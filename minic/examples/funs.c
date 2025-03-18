@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int aaa() {}
 bool bbb() {}

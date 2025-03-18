@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Function {
+    public String file;
     public String name;
     public List<Variable> parameters = new ArrayList<>();
     public Type returnType;

@@ -1,21 +1,22 @@
-#include "minic.c"
+#include "minic.h"
 
-int one() { return 1; }
-
-int main() {
+int foo(int a) {
 	int i = 0;
-	int a = one();
-	int c = one() + 9;
-	int d = 0;
+	int c = a + 9;
+	int d = 4*4;
 	int e = 0;
-	while (i < a * c) {
-		int b = a * c;
-		d = d + b;
-		e = c;
+	while (i < a * c + 2) {
+		int b = a + c;
+		d = d + b - 12;
+		e = c - 8;
 		i = i + 1;
 	}
 	printint(d);
 	printint(e);
 	println();
 }
-//stdout:10010
+
+int main() {
+	foo(1);
+}
+//stdout:42

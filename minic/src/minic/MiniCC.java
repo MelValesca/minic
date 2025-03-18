@@ -44,6 +44,7 @@ public class MiniCC extends Walker {
 
 	@Override
 	public void caseFun(NFun node) {
+		lastRegister = 0;
 		String label = node.get_Id().getText();
 		currentRetLabel = "." + label + ".ret";
 		write("\t.globl " + label + "\n");

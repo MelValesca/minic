@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 
 int gcd(int a, int b) {
     int c = a;

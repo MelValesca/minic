@@ -1,10 +1,11 @@
-#include "minic.c"
+#include "minic.h"
 
-// Compte le nombre de nombre premiers inférieurs à 10000
+// Compte le nombre de nombre premiers inférieurs à max
 int main() {
 	int n = 2;
 	int nb = 0;
-	while (n<100) {
+	int max = 200;
+	while (n<max) {
 		int f = 2;
 		bool prime = true;
 		while (f<n) {
@@ -27,4 +28,4 @@ int main() {
 	printint(nb);
 	println();
 }
-//stdout:25
+//stdout:46

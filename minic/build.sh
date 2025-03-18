@@ -20,5 +20,5 @@ if find src/ build/ -type f -printf '%T@ %p\n' | sort | tail -n 1 | grep -q java
 	if [ "$#" = 0 ]; then
 		set src/minic/*.java
 	fi
-	javac -d build --source-path src "$@"
+	javac --release 17 -d build --source-path src "$@"
 fi

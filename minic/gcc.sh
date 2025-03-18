@@ -1,4 +1,4 @@
 #!/bin/sh
 set -ex
-gcc "$1" -o a.out
-./a.out
+riscv64-linux-gnu-gcc "$@" minic_rt.c -static -o a.out
+./perf.sh "gcc qemu" "$@" qemu-riscv64 ./a.out

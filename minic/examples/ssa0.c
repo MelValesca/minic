@@ -1,11 +1,13 @@
-#include "minic.c"
+#include "minic.h"
 
 int main() {
 	int a = 10;
 	printint(a);
 	println();
 	a = a + 11;
-	printint(a);
+	if(0<a) {
+		printint(a);
+	}
 	println();
 	a = a * 2;
 	printint(a);

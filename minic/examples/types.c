@@ -1,4 +1,4 @@
-#include "minic.c"
+#include "minic.h"
 int main() {
 	int a = 1;
 	a = 1 + 2 - 3 * 4;
