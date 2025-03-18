@@ -87,7 +87,7 @@ public class RegisterAllocationLinearScan extends Pass {
                 registerCount = Math.min(12, ramax); //s0 to s11
             } else {
                 used = usedT;
-                registerCount = Math.min(5, ramax); //t0 to t4 (t5 and t6 are reserved for spilling)
+                registerCount = Math.min(7, ramax); //t0 to t6
             }
             int assign = used.nextClearBit(0);
             if (assign >= registerCount) {

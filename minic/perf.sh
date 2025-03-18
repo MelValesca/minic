@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xe
+set -e
 
 engine=$1
 shift
