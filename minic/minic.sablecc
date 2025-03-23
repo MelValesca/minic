@@ -26,11 +26,17 @@ stmts = {some:} stmts stmt |
         {none:} ;
 stmt = {var:} type id '=' exp ';' |
        {assign:} id '=' exp ';' |
+       {tabvar:} id '[' int ']' '=' exp ';' |
+       {ptrassign:} '*' id '=' exp ';' |
+       {memvar:} typeptr id '=' 'new' type ';' |
+       {tabassign:} typeptr id '=' 'new' type '[' int ']' ';' |
        {if:} 'if' '(' exp ')' block |
        {ifelse:} 'if' '(' exp ')' block 'else' [else:]block |
        {while:} 'while' '(' exp ')' block |
        {printint:} 'printint' '(' exp ')' ';' |
        {printbool:} 'printbool' '(' exp ')' ';' |
+       {deletetab:} 'delete' '[]' id ';' |
+       {delete:} 'delete' id ';' |
        {println:} 'println' '(' ')' ';' |
        {call:} id '(' args ')' ';' |
        {return:} 'return' exp ';' ;
@@ -40,7 +46,12 @@ args = {many:} args ',' exp |
        {none:};
 
 type = {int:} 'int' |
-       {bool:} 'bool' ;
+       {bool:} 'bool' |
+       typeptr ;
+
+typeptr = {ptrbool:} 'bool' '*' |
+       {ptrint:} 'int' '*' ;
+
 
 exp = {add:} [left:]exp '+' [right:]exp |
       {sub:} [left:]exp '-' [right:]exp |
@@ -52,8 +63,11 @@ exp = {add:} [left:]exp '+' [right:]exp |
       {true:} 'true' |
       {false:} 'false' |
       {par:} '(' exp ')' |
+      {addr:} '&' id |
       {lt:} [left:]exp '<' [right:]exp |
       {var:} id |
+      {tabvar:} id '[' int ']' |
+      {ptr:} '*' id |
       {call:} id '(' args ')';
 
    Priority
