@@ -5,4 +5,4 @@ int main() {
 	*p = 99;
 	delete[] p;
 }
-//stderr:Type mismatch.
+//stderr:delete[] sur pointeur scalaire

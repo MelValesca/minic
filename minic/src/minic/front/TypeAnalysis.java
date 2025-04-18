@@ -34,8 +34,95 @@ public class TypeAnalysis extends Walker {
         if (expType != type)
             throw new RuntimeException("Type mismatch. Got "+expType+" but expected "+type);
     }
+	
 
-    void visitArithOp(NExp node, NExp left, NExp right) {
+       /* ------------------------------------------------------------------ */
+    /*  POINTEURS ET TABLEAUX : vérification de types                     */
+    /* ------------------------------------------------------------------ */
+
+    // *p
+    @Override
+    public void caseExp_Ptr(NExp_Ptr node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("'*' appliqué à une variable non‑pointeur");
+        expTypes.put(node, v.type.deref());       // résultat : type pointé (Int ou Bool)
+    }
+
+    // &id
+    @Override
+    public void caseExp_Addr(NExp_Addr node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (v.type == Type.Int)
+            expTypes.put(node, Type.IntPtr);
+        else if (v.type == Type.Bool)
+            expTypes.put(node, Type.BoolPtr);
+        else
+            throw new RuntimeException("adresse d'un pointeur déjà !");
+    }
+
+    // *p = exp;
+    @Override
+    public void caseStmt_Ptrassign(NStmt_Ptrassign node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("l‑value n’est pas un pointeur");
+        visitExp(node.get_Exp(), v.type.deref());
+    }
+
+    // int *p = new int;
+    @Override
+    public void caseStmt_Memvar(NStmt_Memvar node) {
+        Type lhs = getType(node.get_Typeptr());   // int* ou bool*
+        Variable var = scopeAnalysis.variables.get(node.get_Id());
+        var.type = lhs;                           // 'new' produit un pointeur compatible
+    }
+
+    // int *t = new int[5];
+    @Override
+    public void caseStmt_Tabassign(NStmt_Tabassign node) {
+        Type lhs = getType(node.get_Typeptr());
+        Variable var = scopeAnalysis.variables.get(node.get_Id());
+        var.type = lhs;                           // pointeur sur int/bool
+    }
+
+    // t[i]
+    @Override
+    public void caseExp_Tabvar(NExp_Tabvar node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("indexation sur non‑tableau");
+        expTypes.put(node, v.type.deref());       // type des éléments
+    }
+
+    // t[i] = exp;
+    @Override
+    public void caseStmt_Tabvar(NStmt_Tabvar node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("indexation sur non‑tableau");
+        visitExp(node.get_Exp(), v.type.deref());
+    }
+
+    // delete p;
+    @Override
+    public void caseStmt_Delete(NStmt_Delete node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("delete sur non‑pointeur");
+        // cohérence tableau/scalaire vérifiée à l’exécution
+    }
+
+    // delete[] t;
+    @Override
+    public void caseStmt_Deletetab(NStmt_Deletetab node) {
+        Variable v = scopeAnalysis.variables.get(node.get_Id());
+        if (!v.type.isPtr())
+            throw new RuntimeException("delete[] sur non‑pointeur");
+    }
+  
+
+   void visitArithOp(NExp node, NExp left, NExp right) {
         visitExp(left, Type.Int);
         visitExp(right, Type.Int);
         expTypes.put(node, Type.Int);
@@ -111,6 +198,15 @@ public class TypeAnalysis extends Walker {
             default: throw new RuntimeException("ICE: unknown type: " + node.getType());
         }
     }
+
+    Type getType(NTypeptr node) {
+        switch (node.getType()) {       
+            case T_Typeptr_Ptrint:  return Type.IntPtr; 
+            case T_Typeptr_Ptrbool: return Type.BoolPtr;
+            default:
+                throw new RuntimeException("ICE: unknown typeptr: " + node.getType());
+        }
+    } 
 
     @Override
     public void caseStmt_Var(NStmt_Var node) {

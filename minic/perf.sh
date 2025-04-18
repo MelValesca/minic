@@ -15,7 +15,7 @@ src=$1
 shift
 
 mkdir -p out
-LANG=C taskset -c 1 perf stat -einstructions,cycles,task-clock,duration_time,user_time,migrations -o out/perf.json -j "$@"
+LANG=C perf stat -einstructions,cycles,task-clock,duration_time,user_time,migrations -o out/perf.json -j "$@"
 grep '^{' out/perf.json > out/perf0.json
 date=$(date -Ins)
 time=$(date +%s.%N)

@@ -6,6 +6,7 @@ import minic.front.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 /** Naive interpreter for a first MiniC specification. */
 public class MiniC extends Walker {
@@ -39,6 +40,121 @@ public class MiniC extends Walker {
 	/** The value of the last visited expression.
 	 * A visit of a node, caseXXX(), may assign this field. */
 	private int lastExpValue;
+	
+	private final ArrayList<Integer> heap = new ArrayList<>();
+	private final HashMap<Integer,Integer> blocks = new HashMap<>();
+
+	private int malloc(int size) {
+    		int base = heap.size();
+    		for (int i = 0; i < size; i++) heap.add(0);
+    		blocks.put(base, size);
+    		return base;
+	}
+
+	private int  load (int addr)         {
+		return heap.get(addr); 
+	}
+
+	private void store(int addr,int val) { 
+		heap.set(addr, val);   
+	}
+	
+	private void mfree(int base, boolean isArray) {
+    		Integer sz = blocks.remove(base);
+    		if (sz == null) throw new RuntimeException("pointeur invalide");
+    		// Pour un delete simple, size doit être 1.
+    		if (!isArray && sz != 1)
+        		throw new RuntimeException("delete[] manquant pour un tableau");
+    		if ( isArray && sz == 1)
+        		throw new RuntimeException("delete[] sur pointeur scalaire");
+		}
+
+	/* NEW */
+
+	@Override
+	public void caseStmt_Memvar(NStmt_Memvar node) {           
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int addr   = malloc(1);
+    		variables.put(v, addr);
+	}
+
+	@Override
+	public void caseStmt_Tabassign(NStmt_Tabassign node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int size   = litteralAnalysis.values.get(node.get_Int());
+    		int addr   = malloc(size);
+    		variables.put(v, addr);
+	}
+
+	/* DELETE */
+
+	@Override
+	public void caseStmt_Delete(NStmt_Delete node) {          
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int addr   = variables.get(v);
+    		mfree(addr, false);
+    		variables.put(v, 0);                                   
+	}
+
+	@Override
+	public void caseStmt_Deletetab(NStmt_Deletetab node) {     
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int addr   = variables.get(v);
+    		mfree(addr, true);
+    		variables.put(v, 0);
+	}
+
+	/* DEREFERENCEMENT */
+	
+	@Override
+	public void caseExp_Ptr(NExp_Ptr node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int addr   = variables.get(v);
+    		lastExpValue = load(addr);
+	}
+
+	@Override
+	public void caseStmt_Ptrassign(NStmt_Ptrassign node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int addr   = variables.get(v);
+    		int val    = visitExp(node.get_Exp());
+    		store(addr, val);
+	}
+
+	/* TABLEAU */
+
+	@Override
+	public void caseExp_Tabvar(NExp_Tabvar node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+   	 	int base   = variables.get(v);
+    		int index  = litteralAnalysis.values.get(node.get_Int());
+    		lastExpValue = load(base + index);
+	}
+
+	@Override
+	public void caseStmt_Tabvar(NStmt_Tabvar node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		int base   = variables.get(v);
+    		int index  = litteralAnalysis.values.get(node.get_Int());
+    		int val    = visitExp(node.get_Exp());
+    		store(base + index, val);
+	}
+
+	/* ADRESSE LOCALE */
+	
+	public void caseExp_Addr(NExp_Addr node) {
+    		Variable v = scopeAnalysis.variables.get(node.get_Id());
+    		Integer current = variables.get(v);
+    		int addr;
+    		if (current == null) {                   
+        			addr = malloc(1);
+        		variables.put(v, addr);              
+        		store(addr, 0);                    
+    		} else {
+        		addr = current;                    
+    		}
+   	 	lastExpValue = addr;
+	}
 
 	@Override
 	public void caseExp_Add(NExp_Add node) {

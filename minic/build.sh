@@ -10,9 +10,9 @@ if [ ! -e rars-1.7.jar ]; then
 	wget https://github.com/rarsm/rars/releases/download/v1.7/rars-1.7.jar
 fi
 
-
-if find src/ ./minic.sablecc -type f -printf '%T@ %p\n' | sort | tail -n 1 | grep -q minic.sablecc; then
-	java -jar sablecc-4-beta.2/lib/sablecc.jar minic.sablecc -d src
+if [ ! -e src/minic/language_minic -o minic.sablecc -nt src/minic/language_minic ]; then
+	rm -rf src/minic/language_minic
+	java -jar sablecc-4-beta.2/lib/sablecc.jar minic.sablecc -d src >/dev/null
 fi
 
 mkdir -p build
