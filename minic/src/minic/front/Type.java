@@ -3,15 +3,34 @@ package minic.front;
 public enum Type {
     	Int,
     	Bool,
-    	IntPtr, 
-	BoolPtr;
+    	/* Pointeurs scalaires */
+    	IntPtrScalar,
+    	BoolPtrScalar,
+
+    	/* Pointeurs tableaux */
+    	IntPtrArray,
+    	BoolPtrArray;
+
 
     	boolean isPtr() { 
-		return this == IntPtr || this == BoolPtr; 
+		return ordinal() >= IntPtrScalar.ordinal();
 	}
-    	Type    deref() {
-        	if (this == IntPtr)  return Int;
-        	if (this == BoolPtr) return Bool;
-        	throw new RuntimeException("deref non‑pointeur");
-    	}
+
+	public Type deref() {
+		switch (this) {
+			case IntPtrScalar:
+			case IntPtrArray:	return Int;
+			case BoolPtrScalar:
+			case BoolPtrArray:	return Bool;
+			default:			throw new RuntimeException("deref sur non‑pointeur");
+		}
+	}
+
+	public boolean isScalarPtr() {
+		return this == IntPtrScalar || this == BoolPtrScalar;
+	}
+
+	public boolean isArrayPtr() {
+		return this == IntPtrArray || this == BoolPtrArray;
+	}
 }

@@ -36,32 +36,27 @@ public class TypeAnalysis extends Walker {
     }
 	
 
-       /* ------------------------------------------------------------------ */
-    /*  POINTEURS ET TABLEAUX : vérification de types                     */
-    /* ------------------------------------------------------------------ */
+    /* POINTEURS ET TABLEAUX */
 
-    // *p
     @Override
     public void caseExp_Ptr(NExp_Ptr node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
         if (!v.type.isPtr())
             throw new RuntimeException("'*' appliqué à une variable non‑pointeur");
-        expTypes.put(node, v.type.deref());       // résultat : type pointé (Int ou Bool)
+        expTypes.put(node, v.type.deref());
     }
 
-    // &id
     @Override
     public void caseExp_Addr(NExp_Addr node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
         if (v.type == Type.Int)
-            expTypes.put(node, Type.IntPtr);
+            expTypes.put(node, Type.IntPtrScalar);
         else if (v.type == Type.Bool)
-            expTypes.put(node, Type.BoolPtr);
+            expTypes.put(node, Type.BoolPtrScalar);
         else
             throw new RuntimeException("adresse d'un pointeur déjà !");
     }
 
-    // *p = exp;
     @Override
     public void caseStmt_Ptrassign(NStmt_Ptrassign node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
@@ -70,32 +65,29 @@ public class TypeAnalysis extends Walker {
         visitExp(node.get_Exp(), v.type.deref());
     }
 
-    // int *p = new int;
     @Override
     public void caseStmt_Memvar(NStmt_Memvar node) {
-        Type lhs = getType(node.get_Typeptr());   // int* ou bool*
+        Type lhs = getType(node.get_Typeptr()); 
         Variable var = scopeAnalysis.variables.get(node.get_Id());
-        var.type = lhs;                           // 'new' produit un pointeur compatible
+        var.type = lhs;    
     }
 
-    // int *t = new int[5];
     @Override
     public void caseStmt_Tabassign(NStmt_Tabassign node) {
         Type lhs = getType(node.get_Typeptr());
+	lhs = (lhs == Type.IntPtrScalar) ? Type.IntPtrArray : Type.BoolPtrArray;
         Variable var = scopeAnalysis.variables.get(node.get_Id());
-        var.type = lhs;                           // pointeur sur int/bool
+        var.type = lhs;
     }
 
-    // t[i]
     @Override
     public void caseExp_Tabvar(NExp_Tabvar node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
         if (!v.type.isPtr())
             throw new RuntimeException("indexation sur non‑tableau");
-        expTypes.put(node, v.type.deref());       // type des éléments
+        expTypes.put(node, v.type.deref());      
     }
 
-    // t[i] = exp;
     @Override
     public void caseStmt_Tabvar(NStmt_Tabvar node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
@@ -104,21 +96,22 @@ public class TypeAnalysis extends Walker {
         visitExp(node.get_Exp(), v.type.deref());
     }
 
-    // delete p;
     @Override
     public void caseStmt_Delete(NStmt_Delete node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
         if (!v.type.isPtr())
-            throw new RuntimeException("delete sur non‑pointeur");
-        // cohérence tableau/scalaire vérifiée à l’exécution
+	    throw new RuntimeException("delete sur non-pointeur");
+	if (!v.type.isScalarPtr())
+            throw new RuntimeException("delete[] requis pour ce bloc");
     }
 
-    // delete[] t;
     @Override
     public void caseStmt_Deletetab(NStmt_Deletetab node) {
         Variable v = scopeAnalysis.variables.get(node.get_Id());
-        if (!v.type.isPtr())
-            throw new RuntimeException("delete[] sur non‑pointeur");
+	if (!v.type.isPtr())
+	    throw new RuntimeException("delete[] sur non-pointeur");
+        if (!v.type.isArrayPtr())
+            throw new RuntimeException("delete[] sur pointeur scalaire");
     }
   
 
@@ -201,9 +194,9 @@ public class TypeAnalysis extends Walker {
 
     Type getType(NTypeptr node) {
         switch (node.getType()) {       
-            case T_Typeptr_Ptrint:  return Type.IntPtr; 
-            case T_Typeptr_Ptrbool: return Type.BoolPtr;
-            default:
+            case T_Typeptr_Ptrint:	return Type.IntPtrScalar;
+            case T_Typeptr_Ptrbool:	return Type.BoolPtrScalar;
+	    default:
                 throw new RuntimeException("ICE: unknown typeptr: " + node.getType());
         }
     } 

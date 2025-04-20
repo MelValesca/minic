@@ -41,6 +41,97 @@ public class MiniCC extends Walker {
     }
 
 	String currentRetLabel;
+	
+
+	/* ALLOCATION */
+
+    	@Override
+    	public void caseStmt_Memvar(NStmt_Memvar node) {
+        	Variable var = scopeAnalysis.variables.get(node.get_Id());
+        	variables.put(var, lastRegister);
+        	write("\tli a0, 4\n");
+        	write("\tcall malloc\n");
+       		write("\tmv s" + lastRegister + ", a0\n");
+        	lastRegister++;
+    	}
+
+    	@Override
+    	public void caseStmt_Tabassign(NStmt_Tabassign node) {
+        	Variable var = scopeAnalysis.variables.get(node.get_Id());
+        	variables.put(var, lastRegister);
+        	int n = litteralAnalysis.values.get(node.get_Int());
+        	write("\tli a0, " + (n * 4) + "\n");
+        	write("\tcall malloc\n");
+        	write("\tmv s" + lastRegister + ", a0\n");
+        	lastRegister++;
+    	}
+	
+	/* DEREFERENCEMENT ET INDEXATION */
+
+		@Override
+	public void caseExp_Ptr(NExp_Ptr node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regptr = variables.get(v);
+		write("\tlw s" + lastRegister + ", 0(s" + regptr + ")\n");
+	}
+
+	@Override
+	public void caseStmt_Ptrassign(NStmt_Ptrassign node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regptr = variables.get(v);
+		int regval = visitExp(node.get_Exp());
+		write("\tsw s" + regval + ", 0(s" + regptr + ")\n");
+	}
+
+	@Override
+	public void caseExp_Tabvar(NExp_Tabvar node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regbase = variables.get(v);
+		int index = litteralAnalysis.values.get(node.get_Int());
+		write("\tlw s" + lastRegister + ", " + (index * 4) + "(s" + regbase + ")\n");
+	}
+
+	@Override
+	public void caseStmt_Tabvar(NStmt_Tabvar node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regbase = variables.get(v);
+		int index = litteralAnalysis.values.get(node.get_Int());
+		int regval = visitExp(node.get_Exp());
+		write("\tsw s" + regval + ", " + (index * 4) + "(s" + regbase + ")\n");
+	}
+
+	/* ADRESSAGE */
+
+	@Override
+	public void caseExp_Addr(NExp_Addr node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regvar = variables.get(v);
+		write("\tli a0, 4\n");
+		write("\tcall malloc\n");
+		write("\tsw s" + regvar + ", 0(a0)\n");
+		write("\tmv s" + lastRegister + ", a0\n");
+	}
+
+	/* DELETE */
+
+	
+	@Override
+	public void caseStmt_Delete(NStmt_Delete node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regptr = variables.get(v);
+		write("\tmv a0, s" + regptr + "\n");
+		write("\tcall free\n");
+	}
+
+	@Override
+	public void caseStmt_Deletetab(NStmt_Deletetab node) {
+		Variable v = scopeAnalysis.variables.get(node.get_Id());
+		int regptr = variables.get(v);
+		write("\tmv a0, s" + regptr + "\n");
+		write("\tcall free\n");
+	}
+	
+	/* PRE-TP */
 
 	@Override
 	public void caseFun(NFun node) {
